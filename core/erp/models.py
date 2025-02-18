@@ -4,6 +4,7 @@ from django.db import models
 from django.forms import model_to_dict
 
 from config import settings
+from core.erp import choices
 from core.erp.choices import gender_choices
 
 
@@ -85,6 +86,13 @@ class Sale(models.Model):
         ('CONTADO', 'Contado'),
         ('CREDITO', 'Credito'),
     ]
+    BIWEEKLY_PAY = [
+        ('UNDEFINED', 'No especifica'),
+        ('15 DIAS', '15 días'),
+        ('30 DIAS', '30 días'),
+        ('45 DIAS', '45 días'),
+        ('60 DIAS', '60 días'),
+    ]
 
     cli = models.ForeignKey(Client, on_delete=models.CASCADE)
     date_joined = models.DateField(default=datetime.now)
@@ -93,7 +101,7 @@ class Sale(models.Model):
     discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
-    biweekly_pay = models.IntegerField(default=1)
+    biweekly_pay = models.CharField(max_length=10, choices=BIWEEKLY_PAY, default='UNDEFINED')
 
     def __str__(self):
         return self.cli.names

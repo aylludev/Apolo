@@ -92,9 +92,10 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                     sale.cli_id = vents['cli']
                     sale.subtotal = float(vents['subtotal'])
                     sale.iva = float(vents['iva'])
-                    sale.discountall = float(vents['discount'])
+                    sale.discountall = float(vents['discountall'])
                     sale.total = float(vents['total'])
                     sale.type_payment = vents['type_payment']
+                    sale.biweekly_pay = vents['biweekly_pay']
                     sale.save()
                     for i in vents['products']:
                         det = DetSale()
@@ -187,7 +188,7 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                     sale.cli_id = vents['cli']
                     sale.subtotal = float(vents['subtotal'])
                     sale.iva = float(vents['iva'])
-                    sale.discountall = float(vents['discount'])
+                    sale.discountall = float(vents['discountall'])
                     sale.total = float(vents['total'])
                     sale.type_payment = vents['type_payment']
                     sale.save()

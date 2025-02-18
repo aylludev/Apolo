@@ -206,4 +206,7 @@ class SaleForm(ModelForm):
             'type_payment': forms.Select(attrs={
                 'class': 'form-control',
             }),
+            'biweekly_pay': forms.Select(attrs={
+                'class': 'form-control',
+            }),
         }
