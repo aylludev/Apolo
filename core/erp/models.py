@@ -90,7 +90,7 @@ class Sale(models.Model):
     date_joined = models.DateField(default=datetime.now)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
-    discount = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
     biweekly_pay = models.IntegerField(default=1)
@@ -104,7 +104,9 @@ class Sale(models.Model):
         item['subtotal'] = format(self.subtotal, '.2f')
         item['iva'] = format(self.iva, '.2f')
         item['total'] = format(self.total, '.2f')
+        item['discountall'] = format(self.discountall, '.2f')
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
+        item['type_payment'] = self.type_payment
         item['det'] = [i.toJSON() for i in self.detsale_set.all()]
         return item
 

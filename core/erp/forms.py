@@ -196,6 +196,9 @@ class SaleForm(ModelForm):
                 'readonly': True,
                 'class': 'form-control',
             }),
+            'discountall': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
             'total': forms.TextInput(attrs={
                 'readonly': True,
                 'class': 'form-control',

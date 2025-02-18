@@ -86,12 +86,15 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
             elif action == 'add':
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
+                    print(vents)
                     sale = Sale()
                     sale.date_joined = vents['date_joined']
                     sale.cli_id = vents['cli']
                     sale.subtotal = float(vents['subtotal'])
                     sale.iva = float(vents['iva'])
+                    sale.discountall = float(vents['discount'])
                     sale.total = float(vents['total'])
+                    sale.type_payment = vents['type_payment']
                     sale.save()
                     for i in vents['products']:
                         det = DetSale()
@@ -99,6 +102,7 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
                         det.price = float(i['pvp'])
+                        det.discount = float(i['discount'])
                         det.subtotal = float(i['subtotal'])
                         det.save()
                         det.prod.stock -= det.cant

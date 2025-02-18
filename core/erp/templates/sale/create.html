@@ -71,10 +71,10 @@
                                         <th>Eliminar</th>
                                         <th>Producto</th>
                                         <th>Stock</th>
-                                        <th>Precio Unitario</th>
+                                        <th>Precio</th>
                                         <th>Cantidad</th>
-                                        <th>Descuento</th>
-                                        <th>Subtotal</th>
+                                        <th>Descuento al producto (%)</th>
+                                        <th>Valor Bruto</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -119,11 +119,19 @@
                                     <input type="text" class="form-control" readonly name="ivacalc" value="0.00">
                                 </div>
                                 <div class="form-group">
+                                    <label>Descuento a la compra (%):</label>
+                                    {{ form.discountall }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Descuento:</label>
+                                    <input type="text" class="form-control" readonly name="discalc" value="0.00">
+                                </div>
+                                <div class="form-group">
                                     <label>Total a pagar:</label>
                                     {{ form.total }}
                                 </div>
                                 <div class="form-group">
-                                    <label>Total a pagar:</label>
+                                    <label>Tipo de pago:</label>
                                     {{ form.type_payment }}
                                 </div>
                             </div>
