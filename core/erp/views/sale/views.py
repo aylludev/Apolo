@@ -187,7 +187,9 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                     sale.cli_id = vents['cli']
                     sale.subtotal = float(vents['subtotal'])
                     sale.iva = float(vents['iva'])
+                    sale.discountall = float(vents['discount'])
                     sale.total = float(vents['total'])
+                    sale.type_payment = vents['type_payment']
                     sale.save()
                     sale.detsale_set.all().delete()
                     for i in vents['products']:
@@ -196,6 +198,7 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
                         det.price = float(i['pvp'])
+                        det.discount = float(i['discount'])
                         det.subtotal = float(i['subtotal'])
                         det.save()
                         det.prod.stock -= det.cant
@@ -226,6 +229,7 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
             for i in DetSale.objects.filter(sale_id=self.get_object().id):
                 item = i.prod.toJSON()
                 item['cant'] = i.cant
+                item['discount'] = i.discount
                 data.append(item)
         except:
             pass
@@ -240,7 +244,6 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
         context['det'] = json.dumps(self.get_details_product())
         context['frmClient'] = ClientForm()
         return context
-
 
 class SaleDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
     model = Sale

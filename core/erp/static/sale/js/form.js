@@ -11,19 +11,19 @@ var vents = {
     type_payment: '',
     products: []
   },
-  get_ids: function() {
+  get_ids: function () {
     var ids = [];
-    $.each(this.items.products, function(key, value) {
+    $.each(this.items.products, function (key, value) {
       ids.push(value.id);
     });
     return ids;
   },
-  calculate_invoice: function() {
+  calculate_invoice: function () {
     var subtotal = 0.00;
     var iva = $('input[name="iva"]').val();
     var type_payment = $('select[name="type_payment"]').val();
     var discountall = $('input[name="discountall"]').val()
-    $.each(this.items.products, function(pos, dict) {
+    $.each(this.items.products, function (pos, dict) {
       dict.pos = pos;
       var discount = dict.discount || 0;
       var subtotalproduct = dict.cant * parseFloat(dict.pvp)
@@ -43,11 +43,11 @@ var vents = {
     $('input[name="discalc"]').val(discalc);
     $('input[name="total"]').val(this.items.total.toFixed(2));
   },
-  add: function(item) {
+  add: function (item) {
     this.items.products.push(item);
     this.list();
   },
-  list: function() {
+  list: function () {
     this.calculate_invoice();
     tblProducts = $('#tblProducts').DataTable({
       responsive: true,
@@ -67,7 +67,7 @@ var vents = {
         {
           targets: [-5],
           class: 'text-center',
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<span class="badge badge-secondary">' + data + '</span>';
           }
         },
@@ -75,7 +75,7 @@ var vents = {
           targets: [0],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<a rel="remove" class="btn btn-danger btn-xs btn-flat" style="color: white;"><i class="fas fa-trash-alt"></i></a>';
           }
         },
@@ -83,7 +83,7 @@ var vents = {
           targets: [-4],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '$' + parseFloat(data).toFixed(2);
           }
         },
@@ -91,7 +91,7 @@ var vents = {
           targets: [-3],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<input type="text" name="cant" class="form-control form-control-sm input-sm" autocomplete="off" value="' + row.cant + '">';
           }
         },
@@ -99,7 +99,7 @@ var vents = {
           targets: [-2],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<input type="text" name="discount" class="form-control form-control-sm input-sm" autocomplete="off" value="' + row.discount + '">';
           }
         },
@@ -107,7 +107,7 @@ var vents = {
           targets: [6],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '$' + parseFloat(data).toFixed(2);
           }
         },
@@ -127,7 +127,7 @@ var vents = {
           postfix: '%'
         });
       },
-      initComplete: function(settings, json) {
+      initComplete: function (settings, json) {
 
       }
     });
@@ -163,7 +163,7 @@ function formatRepo(repo) {
   return option;
 }
 
-$(function() {
+$(function () {
 
   $('.select2').select2({
     theme: "bootstrap4",
@@ -184,7 +184,7 @@ $(function() {
     boostat: 5,
     maxboostedstep: 10,
     postfix: '%'
-  }).on('change', function() {
+  }).on('change', function () {
     vents.calculate_invoice();
   })
     .val(0);
@@ -196,12 +196,12 @@ $(function() {
     boostat: 5,
     maxboostedstep: 10,
     postfix: '%'
-  }).on('change', function() {
+  }).on('change', function () {
     vents.calculate_invoice();
   })
     .val(0);
 
-  $('select[name="type_payment"]').on('change', function() {
+  $('select[name="type_payment"]').on('change', function () {
     vents.calculate_invoice()
     console.log("Nuevo valor seleccionado: " + vents.calculate_invoice());
   });
@@ -218,13 +218,13 @@ $(function() {
       headers: {
         'X-CSRFToken': csrftoken,
       },
-      data: function(params) {
+      data: function (params) {
         return {
           term: params.term,
           action: 'search_clients'
         };
       },
-      processResults: function(data) {
+      processResults: function (data) {
         return {
           results: data
         };
@@ -234,20 +234,20 @@ $(function() {
     minimumInputLength: 1,
   });
 
-  $('.btnAddClient').on('click', function() {
+  $('.btnAddClient').on('click', function () {
     $('#myModalClient').modal('show');
   });
 
-  $('#myModalClient').on('hidden.bs.modal', function(e) {
+  $('#myModalClient').on('hidden.bs.modal', function (e) {
     $('#frmClient').trigger('reset');
   })
 
-  $('#frmClient').on('submit', function(e) {
+  $('#frmClient').on('submit', function (e) {
     e.preventDefault();
     var parameters = new FormData(this);
     parameters.append('action', 'create_client');
     submit_with_ajax(window.location.pathname, 'Notificación',
-      '¿Estas seguro de crear al siguiente cliente?', parameters, function(response) {
+      '¿Estas seguro de crear al siguiente cliente?', parameters, function (response) {
         //console.log(response);
         var newOption = new Option(response.full_name, response.id, false, true);
         $('select[name="cli"]').append(newOption).trigger('change');
@@ -287,29 +287,29 @@ $(function() {
       }
   });*/
 
-  $('.btnRemoveAll').on('click', function() {
+  $('.btnRemoveAll').on('click', function () {
     if (vents.items.products.length === 0) return false;
-    alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function() {
+    alert_action('Notificación', '¿Estas seguro de eliminar todos los items de tu detalle?', function () {
       vents.items.products = [];
       vents.list();
-    }, function() {
+    }, function () {
 
     });
   });
 
   // event cant
   $('#tblProducts tbody')
-    .on('click', 'a[rel="remove"]', function() {
+    .on('click', 'a[rel="remove"]', function () {
       var tr = tblProducts.cell($(this).closest('td, li')).index();
       alert_action('Notificación', '¿Estas seguro de eliminar el producto de tu detalle?',
-        function() {
+        function () {
           vents.items.products.splice(tr.row, 1);
           vents.list();
-        }, function() {
+        }, function () {
 
         });
     })
-    .on('change', 'input[name="cant"]', function() {
+    .on('change', 'input[name="cant"]', function () {
       console.clear();
       var cant = parseInt($(this).val());
       var tr = tblProducts.cell($(this).closest('td, li')).index();
@@ -317,7 +317,7 @@ $(function() {
       vents.calculate_invoice();
       $('td:eq(6)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
     })
-    .on('change', 'input[name="discount"]', function() {
+    .on('change', 'input[name="discount"]', function () {
       console.clear();
       var discount = parseInt($(this).val());
       var tr = tblProducts.cell($(this).closest('td, li')).index();
@@ -326,11 +326,11 @@ $(function() {
       $('td:eq(6)', tblProducts.row(tr.row).node()).html('$' + vents.items.products[tr.row].subtotal.toFixed(2));
     });
 
-  $('.btnClearSearch').on('click', function() {
+  $('.btnClearSearch').on('click', function () {
     $('input[name="search"]').val('').focus();
   });
 
-  $('.btnSearchProducts').on('click', function() {
+  $('.btnSearchProducts').on('click', function () {
     tblSearchProducts = $('#tblSearchProducts').DataTable({
       responsive: true,
       autoWidth: false,
@@ -361,14 +361,14 @@ $(function() {
           targets: [-4],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<img src="' + data + '" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">';
           }
         },
         {
           targets: [-3],
           class: 'text-center',
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '<span class="badge badge-secondary">' + data + '</span>';
           }
         },
@@ -376,7 +376,7 @@ $(function() {
           targets: [-2],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             return '$' + parseFloat(data).toFixed(2);
           }
         },
@@ -384,13 +384,13 @@ $(function() {
           targets: [-1],
           class: 'text-center',
           orderable: false,
-          render: function(data, type, row) {
+          render: function (data, type, row) {
             var buttons = '<a rel="add" class="btn btn-success btn-xs btn-flat"><i class="fas fa-plus"></i></a> ';
             return buttons;
           }
         },
       ],
-      initComplete: function(settings, json) {
+      initComplete: function (settings, json) {
 
       }
     });
@@ -398,7 +398,7 @@ $(function() {
   });
 
   $('#tblSearchProducts tbody')
-    .on('click', 'a[rel="add"]', function() {
+    .on('click', 'a[rel="add"]', function () {
       var tr = tblSearchProducts.cell($(this).closest('td, li')).index();
       var product = tblSearchProducts.row(tr.row).data();
       product.cant = 1;
@@ -408,7 +408,7 @@ $(function() {
     });
 
   // event submit
-  $('#frmSale').on('submit', function(e) {
+  $('#frmSale').on('submit', function (e) {
     e.preventDefault();
 
     if (vents.items.products.length === 0) {
@@ -422,11 +422,11 @@ $(function() {
     parameters.append('action', $('input[name="action"]').val());
     parameters.append('vents', JSON.stringify(vents.items));
     submit_with_ajax(window.location.pathname, 'Notificación',
-      '¿Estas seguro de realizar la siguiente acción?', parameters, function(response) {
-        alert_action('Notificación', '¿Desea imprimir la boleta de venta?', function() {
+      '¿Estas seguro de realizar la siguiente acción?', parameters, function (response) {
+        alert_action('Notificación', '¿Desea imprimir la boleta de venta?', function () {
           window.open('/erp/sale/invoice/pdf/' + response.id + '/', '_blank');
           location.href = '/erp/sale/list/';
-        }, function() {
+        }, function () {
           location.href = '/erp/sale/list/';
         });
       });
@@ -441,7 +441,7 @@ $(function() {
       type: 'POST',
       headers: { 'X-CSRFToken': csrftoken, },
       url: window.location.pathname,
-      data: function(params) {
+      data: function (params) {
         var queryParameters = {
           term: params.term,
           action: 'search_autocomplete',
@@ -449,7 +449,7 @@ $(function() {
         }
         return queryParameters;
       },
-      processResults: function(data) {
+      processResults: function (data) {
         return {
           results: data
         };
@@ -458,7 +458,7 @@ $(function() {
     placeholder: 'Ingrese una descripción',
     minimumInputLength: 1,
     templateResult: formatRepo,
-  }).on('select2:select', function(e) {
+  }).on('select2:select', function (e) {
     var data = e.params.data;
     if (!Number.isInteger(data.id)) {
       return false;
