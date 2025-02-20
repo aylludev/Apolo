@@ -23,7 +23,7 @@ class User(AbstractUser):
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['image'] = self.get_image()
         item['full_name'] = self.get_full_name()
-        item['groups'] = [{'id': g.id, 'name': g.name} for g in self.groups.all()]
+        item['groups'] = list(self.groups.values('id', 'name'))
         return item
 
     def get_group_session(self):
