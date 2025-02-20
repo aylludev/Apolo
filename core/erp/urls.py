@@ -4,6 +4,7 @@ from core.erp.views.client.views import *
 from core.erp.views.dashboard.views import *
 from core.erp.views.product.views import *
 from core.erp.views.sale.views import *
+from core.erp.views.cotization.view import *
 from core.erp.views.tests.views import TestView
 
 app_name = 'erp'
@@ -34,4 +35,10 @@ urlpatterns = [
     path('sale/delete/<int:pk>/', SaleDeleteView.as_view(), name='sale_delete'),
     path('sale/update/<int:pk>/', SaleUpdateView.as_view(), name='sale_update'),
     path('sale/invoice/pdf/<int:pk>/', SaleInvoicePdfView.as_view(), name='sale_invoice_pdf'),
+    # cotization
+    path('cotization/list/', CotizationListView.as_view(), name='cotization_list'),
+    path('cotization/add/', CotizationCreateView.as_view(), name='cotization_create'),
+    path('cotization/delete/<int:pk>/', CotizationDeleteView.as_view(), name='cotization_delete'),
+    path('cotization/update/<int:pk>/', CotizationUpdateView.as_view(), name='cotization_update'),
+    path('cotization/invoice/pdf/<int:pk>/', CotizationInvoicePdfView.as_view(), name='cotization_invoice_pdf'),
 ]

@@ -210,3 +210,49 @@ class SaleForm(ModelForm):
                 'class': 'form-control',
             }),
         }
+
+class CotizationForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cli'].queryset = Client.objects.none()
+
+    class Meta:
+        model = Sale
+        fields = '__all__'
+        widgets = {
+            'cli': forms.Select(attrs={
+                'class': 'custom-select select2',
+                # 'style': 'width: 100%'
+            }),
+            'date_joined': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                    'autocomplete': 'off',
+                    'class': 'form-control datetimepicker-input',
+                    'id': 'date_joined',
+                    'data-target': '#date_joined',
+                    'data-toggle': 'datetimepicker'
+                }
+            ),
+            'iva': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'subtotal': forms.TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+            'discountall': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'total': forms.TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+            'type_payment': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'biweekly_pay': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+        }

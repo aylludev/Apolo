@@ -12,15 +12,15 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DeleteView, UpdateView, View
 from weasyprint import HTML, CSS
 
-from core.erp.forms import SaleForm, ClientForm
+from core.erp.forms import ClientForm, CotizationForm
 from core.erp.mixins import ValidatePermissionRequiredMixin
-from core.erp.models import Sale, Product, DetSale, Client
+from core.erp.models import Cotization, Product, DetCotization, Client
 
 
-class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
-    model = Sale
-    template_name = 'sale/list.html'
-    permission_required = 'view_sale'
+class CotizationListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
+    model = Cotization
+    template_name = 'cotization/list.html'
+    permission_required = 'view_cotization'
 
     def post(self, request, *args, **kwargs):
         data = {}
@@ -28,11 +28,12 @@ class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Sale.objects.all()[0:15]:
+                for i in Cotization.objects.all()[0:15]:
                     data.append(i.toJSON())
             elif action == 'search_details_prod':
                 data = []
-                for i in DetSale.objects.filter(sale_id=request.POST['id']):
+                for i in DetCotization.objects.filter(cotization_id=request.POST['id']):
+                    print(i)
                     data.append(i.toJSON())
             else:
                 data['error'] = 'Ha ocurrido un error'
@@ -42,19 +43,19 @@ class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Listado de Ventas'
-        context['create_url'] = reverse_lazy('erp:sale_create')
-        context['list_url'] = reverse_lazy('erp:sale_list')
-        context['entity'] = 'Ventas'
+        context['title'] = 'Listado de Cotizaciones'
+        context['create_url'] = reverse_lazy('erp:cotization_create')
+        context['list_url'] = reverse_lazy('erp:cotization_list')
+        context['entity'] = 'Cotizaciones'
         return context
 
 
-class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
-    model = Sale
-    form_class = SaleForm
-    template_name = 'sale/create.html'
-    success_url = reverse_lazy('erp:sale_list')
-    permission_required = 'add_sale'
+class CotizationCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, CreateView):
+    model = Cotization
+    form_class = CotizationForm
+    template_name = 'cotization/create.html'
+    success_url = reverse_lazy('erp:cotization_list')
+    permission_required = 'add_cotization'
     url_redirect = success_url
 
     def post(self, request, *args, **kwargs):
@@ -87,7 +88,7 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                 with transaction.atomic():
                     vents = json.loads(request.POST['vents'])
                     print(vents)
-                    sale = Sale()
+                    sale = Cotization()
                     sale.date_joined = vents['date_joined']
                     sale.cli_id = vents['cli']
                     sale.subtotal = float(vents['subtotal'])
@@ -98,15 +99,14 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                     sale.biweekly_pay = vents['biweekly_pay']
                     sale.save()
                     for i in vents['products']:
-                        det = DetSale()
-                        det.sale_id = sale.id
+                        det = DetCotization()
+                        det.cotization_id = sale.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
                         det.price = float(i['pvp'])
                         det.discount = float(i['discount'])
                         det.subtotal = float(i['subtotal'])
                         det.save()
-                        det.prod.stock -= det.cant
                         det.prod.save()
                     data = {'id': sale.id}
             elif action == 'search_clients':
@@ -130,8 +130,8 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Creación de una Venta'
-        context['entity'] = 'Ventas'
+        context['title'] = 'Creación de una Cotizacion'
+        context['entity'] = 'Cotizacion'
         context['list_url'] = self.success_url
         context['action'] = 'add'
         context['det'] = []
@@ -139,17 +139,17 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
         return context
 
 
-class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
-    model = Sale
-    form_class = SaleForm
-    template_name = 'sale/create.html'
-    success_url = reverse_lazy('erp:sale_list')
-    permission_required = 'change_sale'
+class CotizationUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, UpdateView):
+    model = Cotization
+    form_class = CotizationForm
+    template_name = 'cotization/create.html'
+    success_url = reverse_lazy('erp:cotization_list')
+    permission_required = 'change_cotization'
     url_redirect = success_url
 
     def get_form(self, form_class=None):
         instance = self.get_object()
-        form = SaleForm(instance=instance)
+        form = CotizationForm(instance=instance)
         form.fields['cli'].queryset = Client.objects.filter(id=instance.cli.id)
         return form
 
@@ -193,18 +193,16 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                     sale.type_payment = vents['type_payment']
                     sale.biweekly_pay = vents['biweekly_pay']
                     sale.save()
-                    sale.detsale_set.all().delete()
+                    sale.detcotization_set.all().delete()
                     for i in vents['products']:
-                        det = DetSale()
-                        det.sale_id = sale.id
+                        det = DetCotization()
+                        det.cotization_id = sale.id
                         det.prod_id = i['id']
                         det.cant = int(i['cant'])
                         det.price = float(i['pvp'])
                         det.discount = float(i['discount'])
                         det.subtotal = float(i['subtotal'])
                         det.save()
-                        det.prod.stock -= det.cant
-                        det.prod.save()
                     data = {'id': sale.id}
             elif action == 'search_clients':
                 data = []
@@ -228,7 +226,7 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
     def get_details_product(self):
         data = []
         try:
-            for i in DetSale.objects.filter(sale_id=self.get_object().id):
+            for i in DetCotization.objects.filter(cotization_id=self.get_object().id):
                 item = i.prod.toJSON()
                 item['cant'] = i.cant
                 item['discount'] = i.discount
@@ -239,18 +237,18 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Edición de una Venta'
-        context['entity'] = 'Ventas'
+        context['title'] = 'Edición de una Cotizacion'
+        context['entity'] = 'Cotizacion'
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         context['det'] = json.dumps(self.get_details_product())
         context['frmClient'] = ClientForm()
         return context
 
-class SaleDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
-    model = Sale
-    template_name = 'sale/delete.html'
-    success_url = reverse_lazy('erp:sale_list')
+class CotizationDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, DeleteView):
+    model = Cotization
+    template_name = 'cotization/delete.html'
+    success_url = reverse_lazy('erp:cotization_list')
     permission_required = 'delete_sale'
     url_redirect = success_url
 
@@ -268,19 +266,19 @@ class SaleDeleteView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Delete
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Eliminación de una Venta'
-        context['entity'] = 'Ventas'
+        context['title'] = 'Eliminación de una Cotizacion'
+        context['entity'] = 'Cotizacion'
         context['list_url'] = self.success_url
         return context
 
 
-class SaleInvoicePdfView(LoginRequiredMixin, View):
+class CotizationInvoicePdfView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         try:
-            template = get_template('sale/invoice.html')
+            template = get_template('cotization/invoice.html')
             context = {
-                'sale': Sale.objects.get(pk=self.kwargs['pk']),
+                'sale': Cotization.objects.get(pk=self.kwargs['pk']),
                 'comp': {'name': 'AGROINSUMOS MERKO SUR', 'nit': '1085928681-1', 'address': 'La Victoria', 'city': 'Ipiales', 'vendor': 'Alexander Palles'},
                 'icon': '{}{}'.format(settings.MEDIA_URL, 'logo.png')
             }
@@ -290,4 +288,4 @@ class SaleInvoicePdfView(LoginRequiredMixin, View):
             return HttpResponse(pdf, content_type='application/pdf')
         except:
             pass
-        return HttpResponseRedirect(reverse_lazy('erp:sale_list'))
+        return HttpResponseRedirect(reverse_lazy('erp:cotization_list'))

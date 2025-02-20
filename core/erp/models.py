@@ -30,6 +30,7 @@ class Product(models.Model):
     cat = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría')
     image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
     stock = models.IntegerField(default=0, verbose_name='Stock')
+    purchase = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de compra')
     pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de venta')
 
     def __str__(self):
@@ -40,6 +41,7 @@ class Product(models.Model):
         item['full_name'] = '{} / {}'.format(self.name, self.cat.name)
         item['cat'] = self.cat.toJSON()
         item['image'] = self.get_image()
+        item['purchase'] = format(self.pvp, '.2f')
         item['pvp'] = format(self.pvp, '.2f')
         return item
 
@@ -60,6 +62,8 @@ class Client(models.Model):
     dni = models.CharField(max_length=10, unique=True, verbose_name='Dni')
     date_birthday = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
     address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
+    city = models.CharField(max_length=150, null=True, blank=True, verbose_name='Ciudad')
+    cellphone = models.CharField(max_length=150, null=True, blank=True, verbose_name='Telefono')
     gender = models.CharField(max_length=10, choices=gender_choices, default='male', verbose_name='Sexo')
 
     def __str__(self):
@@ -115,6 +119,7 @@ class Sale(models.Model):
         item['discountall'] = format(self.discountall, '.2f')
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['type_payment'] = self.type_payment
+        item['biweekly_pay'] = self.biweekly_pay
         item['det'] = [i.toJSON() for i in self.detsale_set.all()]
         return item
 
@@ -123,17 +128,6 @@ class Sale(models.Model):
             det.prod.stock += det.cant
             det.prod.save()
         super(Sale, self).delete()
-
-    def calculate_invoice(self):
-        subtotal = 0.00
-        for d in self.detsale_set.all():
-            d.subtotal = float(d.price) * int(d.cant)
-            d.save()
-            subtotal += d.subtotal
-        self.subtotal = subtotal
-        self.iva = self.subtotal * float(0.12)
-        self.total = float(self.subtotal) + float(self.iva)
-        self.save()
 
     class Meta:
         verbose_name = 'Venta'
@@ -154,6 +148,78 @@ class DetSale(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self, exclude=['sale'])
+        item['prod'] = self.prod.toJSON()
+        item['price'] = format(self.price, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
+        return item
+
+    class Meta:
+        verbose_name = 'Detalle de Venta'
+        verbose_name_plural = 'Detalle de Ventas'
+        ordering = ['id']
+
+class Cotization(models.Model):
+    TYPE_PAYMENT = [
+        ('CONTADO', 'Contado'),
+        ('CREDITO', 'Credito'),
+    ]
+    BIWEEKLY_PAY = [
+        ('UNDEFINED', 'No especifica'),
+        ('15 DIAS', '15 días'),
+        ('30 DIAS', '30 días'),
+        ('45 DIAS', '45 días'),
+        ('60 DIAS', '60 días'),
+    ]
+
+    cli = models.ForeignKey(Client, on_delete=models.CASCADE)
+    date_joined = models.DateField(default=datetime.now)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
+    biweekly_pay = models.CharField(max_length=10, choices=BIWEEKLY_PAY, default='UNDEFINED')
+
+    def __str__(self):
+        return self.cli.names
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['cli'] = self.cli.toJSON()
+        item['subtotal'] = format(self.subtotal, '.2f')
+        item['iva'] = format(self.iva, '.2f')
+        item['total'] = format(self.total, '.2f')
+        item['discountall'] = format(self.discountall, '.2f')
+        item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
+        item['type_payment'] = self.type_payment
+        item['biweekly_pay'] = self.biweekly_pay
+        item['det'] = [i.toJSON() for i in self.detcotization_set.all()]
+        return item
+
+    def delete(self, using=None, keep_parents=False):
+        for det in self.detcotization_set.all():
+            det.prod.stock += det.cant
+            det.prod.save()
+        super(Cotization, self).delete()
+
+    class Meta:
+        verbose_name = 'Venta'
+        verbose_name_plural = 'Ventas'
+        ordering = ['id']
+
+class DetCotization(models.Model):
+    cotization = models.ForeignKey(Cotization, on_delete=models.CASCADE)
+    prod = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    cant = models.IntegerField(default=0)
+    discount = models.IntegerField(default=0)
+    subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+
+    def __str__(self):
+        return self.prod.name
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['cotization'])
         item['prod'] = self.prod.toJSON()
         item['price'] = format(self.price, '.2f')
         item['subtotal'] = format(self.subtotal, '.2f')

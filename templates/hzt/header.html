@@ -21,18 +21,13 @@
                     <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                        class="nav-link dropdown-toggle"><i class="fas fa-folder-open"></i> Mantenimientos</a>
                     <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
-                        <li><a href="{% url 'erp:category_list' %}" class="dropdown-item"><i
-                                class="fas fa-truck-loading"></i> Categorías</a></li>
-                        <li><a href="{% url 'erp:product_list' %}" class="dropdown-item"><i class="fas fa-boxes"></i>
-                            Productos</a></li>
-                        <li><a href="{% url 'erp:client_list' %}" class="dropdown-item"><i class="fas fa-users"></i>
-                            Clientes</a></li>
-                        <li><a href="{% url 'erp:sale_list' %}" class="dropdown-item"><i
-                                class="fas fa-shopping-cart"></i> Ventas</a></li>
-                        <li><a href="{% url 'sale_report' %}" class="dropdown-item"><i class="fas fa-chart-bar"></i>
-                            Reporte de Ventas</a></li>
-                        <li><a href="{% url 'user:user_list' %}" class="dropdown-item"><i
-                                class="fas fa-user-friends"></i> Usuarios</a></li>
+                        <li><a href="{% url 'erp:category_list' %}" class="dropdown-item"><i class="fas fa-truck-loading"></i> Categorías</a></li>
+                        <li><a href="{% url 'erp:product_list' %}" class="dropdown-item"><i class="fas fa-boxes"></i> Productos</a></li>
+                        <li><a href="{% url 'erp:client_list' %}" class="dropdown-item"><i class="fas fa-users"></i>Clientes</a></li>
+                        <li><a href="{% url 'erp:sale_list' %}" class="dropdown-item"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
+                        <li><a href="{% url 'erp:cotization_list' %}" class="dropdown-item"><i class="fas fa-shopping-cart"></i> Cotizaciones </a></li>
+                        <li><a href="{% url 'sale_report' %}" class="dropdown-item"><i class="fas fa-chart-bar"></i> Reporte de Ventas</a></li>
+                        <li><a href="{% url 'user:user_list' %}" class="dropdown-item"><i class="fas fa-user-friends"></i> Usuarios</a></li>
                     </ul>
                 </li>
             </ul>

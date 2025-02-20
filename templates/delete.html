@@ -50,7 +50,7 @@
                     text: 'Registro eliminado correctamente',
                     icon: 'success',
                     timer: 2000,
-                    onClose: () => {
+                    didClose: () => {
                         location.href = '{{ list_url }}';
                     }
                 }).then((result) => {
