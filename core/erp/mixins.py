@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from django.contrib.auth.models import Group
 from crum import get_current_request
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -38,10 +38,20 @@ class ValidatePermissionRequiredMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         request = get_current_request()
+        print(request)
         if request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
         if 'group' in request.session:
-            group = request.session['group']
+            group_data = request.session['group']
+
+            # Verificar si es un ID y convertirlo en un objeto Group
+            if isinstance(group_data, int):
+                group = Group.objects.get(id=group_data)
+            elif isinstance(group_data, dict):
+                group = Group.objects.get(id=group_data['id'])
+            else:
+                group = group_data  # Si ya es un objeto Group
+
             perms = self.get_perms()
             for p in perms:
                 if not group.permissions.filter(codename=p).exists():

@@ -25,7 +25,7 @@
                         <li><a href="{% url 'erp:product_list' %}" class="dropdown-item"><i class="fas fa-boxes"></i> Productos</a></li>
                         <li><a href="{% url 'erp:client_list' %}" class="dropdown-item"><i class="fas fa-users"></i>Clientes</a></li>
                         <li><a href="{% url 'erp:sale_list' %}" class="dropdown-item"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
-                        <li><a href="{% url 'erp:cotization_list' %}" class="dropdown-item"><i class="fas fa-shopping-cart"></i> Cotizaciones </a></li>
+                        <li><a href="{% url 'erp:cotization_list' %}" class="dropdown-item"><i class="fas fa-file-alt"></i> Cotizaciones </a></li>
                         <li><a href="{% url 'sale_report' %}" class="dropdown-item"><i class="fas fa-chart-bar"></i> Reporte de Ventas</a></li>
                         <li><a href="{% url 'user:user_list' %}" class="dropdown-item"><i class="fas fa-user-friends"></i> Usuarios</a></li>
                     </ul>
@@ -36,7 +36,7 @@
             {% if request.user.groups.all %}
                 <li class="nav-item dropdown">
                     <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                       class="nav-link{% if request.user.groups.all.count > 1 %} dropdown-toggle{% endif %}">{{ request.session.group }}</a>
+                       class="nav-link{% if request.user.groups.all.count > 1 %} dropdown-toggle{% endif %}">{{ request.session.user.group.name }}</a>
                     {% if request.user.groups.all.count > 1 %}
                         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow"
                             style="left: 0px; right: inherit;">

@@ -61,7 +61,7 @@
     <table class="table" style="width: 100%;">
         <thead>
         <tr style="border: 1px solid black;">
-            <th style="width: 25%;" class="text-center">FECHA FACTURA</th>
+            <th style="width: 25%;" class="text-center">FECHA COTIZACIÓN</th>
             <th style="width: 20%;" class="text-center">VENDEDOR</th>
             <th style="width: 25%;" class="text-center">FORMA DE PAGO</th>
             <th style="width: 30%;" class="text-center">CONDICIONES DE PAGO</th>
@@ -88,11 +88,11 @@
         <b>Teléfono: </b> 3156692427 <br>
       </td>
       <td style="border: 1px solid black;">
-        <b>Cliente:</b> {{ sale.cli.get_full_name }}<br>
-        <b>Número de cedula:</b> {{ sale.cli.dni }}<br>
-        <b>Dirección:</b> {{ sale.cli.address }}<br>
-        <b>Ciudad:</b> {{ sale.cli.city }}<br>
-        <b>Teléfono:</b> {{ sale.cli.cellphone }}<br>
+        <b>Cliente:</b> {{ cotization.cli.get_full_name }}<br>
+        <b>Número de cedula:</b> {{ cotization.cli.dni }}<br>
+        <b>Dirección:</b> {{ cotization.cli.address }}<br>
+        <b>Ciudad:</b> {{ cotization.cli.city }}<br>
+        <b>Teléfono:</b> {{ cotization.cli.cellphone }}<br>
       </td>
     </table>
     <table class="table" style="width: 100%;">
@@ -107,7 +107,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for det in sale.detsale_set.all %}
+        {% for det in cotization.detcotization_set.all %}
             <tr>
                 <td class="text-center">{{ forloop.counter }}</td>
                 <td>{{ det.prod.name }}</td>
@@ -140,14 +140,11 @@
       <tbody>
             <td colspan="6">
                 <p class="text-left">
-                    **"Este documento es una factura de venta expedida conforme a lo establecido en el Estatuto Tributario 
-                    y el Decreto 2242 de 2015. El adquirente tiene derecho a solicitar la factura con el cumplimiento de los 
-                    requisitos legales. En caso de reclamos o devoluciones, se deberán presentar los soportes correspondientes 
-                    dentro del término estipulado por la ley. <br>
+                    **"Este documento es una COTIZACIÓN pot tanto no funcionará como factura de venta expedida conforme a 
+                    lo establecido en el Estatuto Tributario y el Decreto 2242 de 2015. <br> 
 
                     Cualquier inquietud o solicitud relacionada con este documento podrá ser atendida a través de los canales de contacto del emisor."** <br>
-                    !Gracias por su preferencia!<br>
-
+                    !Gracias por su preferencia!
                 </p>
             </td>
         </tr>
@@ -157,10 +154,10 @@
       <td style="width: 20%;"><b>AUTORIZADO POR</b></td>
       <td style="width: 20%">{{ comp.name }}</td>
       <td><b>FECHA Y FIRMA DE ACEPTACION Y RECIBO</b></td>
-      <td style="width: 25%"></td>
+      <td style="width: 25%">NO APLICA</td>
     </table> <br>
-    <p class="text-uppercase font-weight-bold text-center" > ¡Porvafor revise su pedido antes de salir del establecimiento. 
-    Una vez que usted haya salido del mismo, no hay derecho a reclamo ni devolución del producto!<br>
+    <p class="text-uppercase font-weight-bold text-center" > ¡Este documento en una cotización, no sera aceptado como factura para reclamos ni devoluciones
+    en ningun caso!<br>
     </p>
 </div>
 </body>

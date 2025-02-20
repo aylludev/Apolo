@@ -23,7 +23,7 @@ class User(AbstractUser):
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['image'] = self.get_image()
         item['full_name'] = self.get_full_name()
-        item['groups'] = list(self.groups.values('id', 'name'))
+        item['groups'] = [{'id': g.id, 'name': g.name} for g in self.groups.all()]
         return item
 
     def get_group_session(self):
@@ -32,6 +32,6 @@ class User(AbstractUser):
             groups = self.groups.all()
             if groups.exists():
                 if 'group' not in request.session:
-                    request.session['group'] = groups[0]
+                    request.session['group'] = {'id': groups[0].id, 'name': groups[0].name} 
         except:
             pass

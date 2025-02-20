@@ -278,7 +278,7 @@ class CotizationInvoicePdfView(LoginRequiredMixin, View):
         try:
             template = get_template('cotization/invoice.html')
             context = {
-                'sale': Cotization.objects.get(pk=self.kwargs['pk']),
+                'cotization': Cotization.objects.get(pk=self.kwargs['pk']),
                 'comp': {'name': 'AGROINSUMOS MERKO SUR', 'nit': '1085928681-1', 'address': 'La Victoria', 'city': 'Ipiales', 'vendor': 'Alexander Palles'},
                 'icon': '{}{}'.format(settings.MEDIA_URL, 'logo.png')
             }
