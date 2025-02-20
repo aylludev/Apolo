@@ -203,8 +203,8 @@ class Cotization(models.Model):
         super(Cotization, self).delete()
 
     class Meta:
-        verbose_name = 'Venta'
-        verbose_name_plural = 'Ventas'
+        verbose_name = 'Cotizacion'
+        verbose_name_plural = 'Cotizaciones'
         ordering = ['id']
 
 class DetCotization(models.Model):
@@ -226,6 +226,6 @@ class DetCotization(models.Model):
         return item
 
     class Meta:
-        verbose_name = 'Detalle de Venta'
-        verbose_name_plural = 'Detalle de Ventas'
+        verbose_name = 'Detalle de Cotizacion'
+        verbose_name_plural = 'Detalle de Cotizaciones'
         ordering = ['id']
