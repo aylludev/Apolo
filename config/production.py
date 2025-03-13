@@ -1,3 +1,4 @@
 from .settings import *
-ALLOWED_HOSTS = ["algorisoftprojects.com", "WWW.algorisoftprojects.com"]
+ALLOWED_HOSTS = ["agroinsumosmerkosur.com", "WWW.agroinsumosmerkosur.com"]
 DEBUG = False
+DATABASES = db.POSTGRESQL

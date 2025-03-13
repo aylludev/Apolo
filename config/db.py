@@ -16,7 +16,7 @@ POSTGRESQL = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'apolo',
         'USER': 'postgres',
-        'PASSWORD': '123',
+        'PASSWORD': 'Apolo39',
         'HOST': 'localhost',
         'PORT': '5432',
     }

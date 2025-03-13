@@ -89,37 +89,19 @@ class ClientForm(ModelForm):
         model = Client
         fields = '__all__'
         widgets = {
-            'names': forms.TextInput(
-                attrs={
-                    'placeholder': 'Ingrese sus nombres',
-                }
-            ),
-            'surnames': forms.TextInput(
-                attrs={
-                    'placeholder': 'Ingrese sus apellidos',
-                }
-            ),
-            'dni': forms.TextInput(
-                attrs={
-                    'placeholder': 'Ingrese su dni',
-                }
-            ),
-            'date_birthday': forms.DateInput(
-                format='%Y-%m-%d',
-                attrs={
-                    'value': datetime.now().strftime('%Y-%m-%d'),
-                    'autocomplete': 'off',
-                    'class': 'form-control datetimepicker-input datetimepiker4',
-                    'id': 'date_joined',
-                    'data-target': '#date_joined',
-                    'data-toggle': 'datetimepicker'
-                }),
-            'address': forms.TextInput(
-                attrs={
+            'names': forms.TextInput(attrs={'placeholder': 'Ingrese sus nombres',}),
+            'surnames': forms.TextInput(attrs={'placeholder': 'Ingrese sus apellidos',}),
+            'dni': forms.TextInput(attrs={'placeholder': 'Ingrese su dni',}),
+            'email': forms.TextInput(attrs={'placeholder': 'Ingrese su email',}),
+            'date_birthday': forms.DateInput(format='%Y-%m-%d',
+                attrs={'value': datetime.now().strftime('%Y-%m-%d'), 'autocomplete': 'off', 'class': 'form-control datetimepicker-input datetimepiker4',
+                    'id': 'date_joined', 'data-target': '#date_joined', 'data-toggle': 'datetimepicker' }),
+            'address': forms.TextInput(attrs={
                     'placeholder': 'Ingrese su dirección',
                 }
             ),
-            'gender': forms.Select()
+            'gender': forms.Select(),
+            'observation': forms.Textarea(attrs={'placeholder': 'Observaciones',}),
         }
 
     def save(self, commit=True):

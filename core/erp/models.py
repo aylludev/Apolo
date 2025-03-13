@@ -59,12 +59,14 @@ class Product(models.Model):
 class Client(models.Model):
     names = models.CharField(max_length=150, verbose_name='Nombres')
     surnames = models.CharField(max_length=150, verbose_name='Apellidos')
-    dni = models.CharField(max_length=10, unique=True, verbose_name='Dni')
+    dni = models.CharField(max_length=10, unique=True, verbose_name='Cedula')
+    email = models.EmailField(max_length=254, unique=True, verbose_name='Correo electrónico')
     date_birthday = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
     address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
     city = models.CharField(max_length=150, null=True, blank=True, verbose_name='Ciudad')
     cellphone = models.CharField(max_length=150, null=True, blank=True, verbose_name='Telefono')
     gender = models.CharField(max_length=10, choices=gender_choices, default='male', verbose_name='Sexo')
+    observation = models.CharField(max_length=254, null=True, blank=True, verbose_name='Observaciones')
 
     def __str__(self):
         return self.get_full_name()

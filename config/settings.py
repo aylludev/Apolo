@@ -153,3 +153,12 @@ EMAIL_HOST_USER = 'djangologin99@gmail.com'
 EMAIL_HOST_PASSWORD = '0m4gATi3rr@'
 
 DOMAIN = ''
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://agroinsumosmerkosur.com",
+    "https://www.agroinsumosmerkosur.com",
+]
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
