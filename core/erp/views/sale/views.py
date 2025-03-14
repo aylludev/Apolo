@@ -1,6 +1,6 @@
 import json
 import os
-
+from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -279,11 +279,26 @@ class SaleInvoicePdfView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         try:
             template = get_template('sale/invoice.html')
+            
+            # Obtener la venta
+            sale = get_object_or_404(Sale, pk=self.kwargs['pk'])
+
+            # Obtener detalles de venta y calcular el descuento total
+            details = sale.detsale_set.all().values('prod__name', 'price', 'cant', 'discount', 'subtotal')
+
+            # Convertir QuerySet a lista y calcular el descuento total
+            details = list(details)
+            for item in details:
+                item['total_discount'] = (item['price'] * item['cant']) - item['subtotal'] # Multiplicación del descuento por la cantidad
+                item['total_val'] = (item['price'] * item['cant']) # Multiplicación del descuento por la cantidad
+
             context = {
-                'sale': Sale.objects.get(pk=self.kwargs['pk']),
+                'sale': sale,
+                'details':details,
                 'comp': {'name': 'AGROINSUMOS MERKO SUR', 'nit': '1085928681-1', 'address': 'La Victoria', 'city': 'Ipiales', 'vendor': 'Alexander Palles'},
                 'icon': '{}{}'.format(settings.MEDIA_URL, 'logo.png')
             }
+
             html = template.render(context)
             css_url = os.path.join(settings.BASE_DIR, 'static/lib/bootstrap-4.6.0/css/bootstrap.min.css')
             pdf = HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(stylesheets=[CSS(css_url)])

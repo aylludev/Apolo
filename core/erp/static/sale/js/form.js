@@ -36,7 +36,7 @@ var vents = {
     this.items.iva = parseFloat(iva);
     this.items.total = this.items.subtotal + this.items.iva;
     this.items.discountall = parseFloat(discountall);
-    var discalc = this.items.total * (this.items.discountall) / 100
+    var discalc = this.items.discountall
     this.items.total = this.items.total - discalc;
     this.items.type_payment = type_payment;
     this.items.biweekly_pay = biweekly_pay;
@@ -180,15 +180,8 @@ $(function() {
     //minDate: moment().format("YYYY-MM-DD")
   });
 
-  $("input[name='discountall']").TouchSpin({
-    min: 0,
-    max: 10,
-    step: 1,
-    decimals: 2,
-    boostat: 5,
-    maxboostedstep: 10,
-    postfix: '%'
-  }).on('change', function() {
+
+  $("input[name='discountall']").on('change', function() {
     vents.calculate_invoice();
   })
 

@@ -134,7 +134,7 @@ class Sale(models.Model):
     class Meta:
         verbose_name = 'Venta'
         verbose_name_plural = 'Ventas'
-        ordering = ['id']
+        ordering = ['date_joined']
 
 
 class DetSale(models.Model):

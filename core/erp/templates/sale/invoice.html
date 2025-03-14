@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load humanize %}
 {% load static %}
 <html lang="en">
 <head>
@@ -51,11 +52,17 @@
     </style>
 </head>
 <body>
-    <table class="table" style="width: 100%;">
+  <table style="width: 100%;">
+    <th style="width: 35%;">
+        <img src="{% static 'img/logo-bw.png' %}" class="img-fluid w-100 d-block img-logo">
+    </th>
+    <th>
+
+    </th>
+  </table>
+    <table style="width: 100%;">
     <th style="width: 35%;">
       <div class="container-fluid">
-      <!-- <img src="{% static 'img/logo.png' %}" class="img-fluid d-block mx-auto img-logo"> --!>
-      <h1 class="name-company">{{ comp.name }}</h1>
     </th>
     <th>
     <table class="table" style="width: 100%;">
@@ -99,39 +106,41 @@
         <thead>
         <tr style="border: 1px solid black;">
             <th style="width: 5%;">Item</th>
-            <th style="width: 35%;">Producto</th>
+            <th style="width: 25%;">Producto</th>
             <th style="width: 10%;">Cantidad</th>
-            <th style="width: 10%;">P.Unitario</th>
-            <th style="width: 15%;">Descuento</th>
-            <th style="width: 25%;" class="text-right">Subtotal</th>
+            <th style="width: 15%;">P.Unitario</th>
+            <th style="width: 15%;">Valor bruto</th>
+            <th style="width: 10%;">Descuento</th>
+            <th style="width: 15%;" class="text-right">Subtotal</th>
         </tr>
         </thead>
         <tbody>
-        {% for det in sale.detsale_set.all %}
+        {% for det in details %}
             <tr>
                 <td class="text-center">{{ forloop.counter }}</td>
-                <td>{{ det.prod.name }}</td>
+                <td>{{ det.prod__name }}</td>
                 <td class="text-center">{{ det.cant }}</td>
-                <td class="text-center">${{ det.price|floatformat:0 }}</td>
-                <td class="text-center">{{ det.discount|floatformat:0 }}%</td>
-                <td class="text-right">{{ det.subtotal|floatformat:2 }}</td>
+                <td class="text-center">${{ det.price|floatformat:0|intcomma }}</td>
+                <td class="text-center">${{ det.total_val|floatformat:0|intcomma }}</td>
+                <td class="text-center">${{ det.total_discount|floatformat:0|intcomma }} </td>
+                <td class="text-right">${{ det.subtotal|floatformat:0|intcomma }}</td>
             </tr>
         {% endfor %}
         <tr>
-            <td colspan="5" class="text-right"><b>Subtotal</b></td>
-            <td class="text-right">{{ sale.subtotal|floatformat:2 }}</td>
+            <td colspan="6" class="text-right"><b>Subtotal</b></td>
+            <td class="text-right">${{ sale.subtotal|floatformat:0|intcomma }}</td>
         </tr>
         <tr>
-            <td colspan="5" class="text-right"><b>Iva</b></td>
+            <td colspan="6" class="text-right"><b>Iva</b></td>
             <td class="text-right">{{ sale.iva|floatformat:0 }}%</td>
         </tr>
         <tr>
-            <td colspan="5" class="text-right"><b>Descuento</b></td>
-            <td class="text-right">{{ sale.discountall|floatformat:0 }}%</td>
+            <td colspan="6" class="text-right"><b>Descuento</b></td>
+            <td class="text-right">${{ sale.discountall|floatformat:0|intcomma }}</td>
         </tr>
         <tr>
-            <td colspan="5" class="text-right"><b>Total a pagar</b></td>
-            <td class="text-right">{{ sale.total|floatformat:2 }}</td>
+            <td colspan="6" class="text-right"><b>Total a pagar</b></td>
+            <td class="text-right">${{ sale.total|floatformat:0|intcomma }}</td>
         </tr>
         <tr>
         </tbody>
