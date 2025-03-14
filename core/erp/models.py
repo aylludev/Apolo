@@ -60,7 +60,7 @@ class Client(models.Model):
     names = models.CharField(max_length=150, verbose_name='Nombres')
     surnames = models.CharField(max_length=150, verbose_name='Apellidos')
     dni = models.CharField(max_length=10, unique=True, verbose_name='Cedula')
-    email = models.EmailField(max_length=254, unique=True, verbose_name='Correo electrónico')
+    email = models.EmailField(max_length=254, null=True, blank=True, unique=True, verbose_name='Correo electrónico')
     date_birthday = models.DateField(default=datetime.now, verbose_name='Fecha de nacimiento')
     address = models.CharField(max_length=150, null=True, blank=True, verbose_name='Dirección')
     city = models.CharField(max_length=150, null=True, blank=True, verbose_name='Ciudad')
