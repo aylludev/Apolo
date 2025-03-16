@@ -199,7 +199,10 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                     sale.discountall = float(vents['discountall'])
                     sale.total = float(vents['total'])
                     sale.type_payment = vents['type_payment']
-                    sale.biweekly_pay = vents['biweekly_pay']
+                    sale.down_payment = vents['down_payment']
+                    if vents['type_payment'] == 'CASH':
+                        sale.down_payment = vents['total']
+                    sale.observation = vents['observation']
                     sale.save()
                     sale.detsale_set.all().delete()
                     for i in vents['products']:
@@ -213,6 +216,13 @@ class SaleUpdateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Update
                         det.save()
                         det.prod.stock -= det.cant
                         det.prod.save()
+                    if vents['type_payment'] == 'CREDIT':
+                        CreditSale.objects.filter(sale_id=sale.id).delete()
+                        credsale = CreditSale()
+                        credsale.sale_id = sale.id
+                        credsale.total_credit = sale.total
+                        credsale.down_payment = sale.down_payment
+                        credsale.save()
                     data = {'id': sale.id}
             elif action == 'search_clients':
                 data = []

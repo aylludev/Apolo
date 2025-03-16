@@ -139,7 +139,7 @@ class SaleForm(ModelForm):
             'discountall': forms.TextInput(attrs={ 'class': 'form-control', }),
             'total': forms.TextInput(attrs={'readonly': True, 'class': 'form-control', }),
             'type_payment': forms.Select(attrs={'class': 'form-control', }),
-            'down_payment': forms.TextInput(attrs={'value': 0, 'class': 'form-control', }),
+            'down_payment': forms.TextInput(attrs={'value': 0.00, 'class': 'form-control', }),
             'observation' : forms.TextInput(attrs={'class': 'form-control'}),
         }
 

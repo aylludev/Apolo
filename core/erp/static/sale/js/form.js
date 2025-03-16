@@ -201,11 +201,10 @@ $(function() {
 
   $('select[name="type_payment"]').on('change', function() {
     console.log($(this).val());
-    if ($(this).val() === "CREDIT") {
-      $("#down_payment").fadeIn();  // Muestra el campo con animación
+    if ($(this).val() === "CASH") {
+      $("#down_payment").fadeOut();  // Muestra el campo con animación
     } else {
-      $("#down_payment").fadeOut();// Oculta el campo con animación
-      this.down_payment = 0.00;
+      $("#down_payment").fadeIn();// Oculta el campo con animación
     }
     vents.calculate_invoice()
   });

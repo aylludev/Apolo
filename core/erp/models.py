@@ -90,8 +90,8 @@ class Client(models.Model):
 
 class Sale(models.Model):
     TYPE_PAYMENT = [
-        ('CASH', 'Contado'),
         ('CREDIT', 'Crédito'),
+        ('CASH', 'Contado'),
     ]
 
     cli = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -100,7 +100,7 @@ class Sale(models.Model):
     iva = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
-    type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
+    type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CREDIT')
     down_payment = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     observation = models.CharField(max_length=254, null=True, blank=True)
 

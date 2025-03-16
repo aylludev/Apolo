@@ -141,10 +141,10 @@
                                 <label>Tipo de pago:</label>
                                 {{ form.type_payment }}
                               </div>
-                              <div id="down_payment" class="form-group" style="display: none;">
-                                <label>Valor de la cuota inicial:</label>
-                                <input type="text" id="down_payment_input" name="down_payment" class="form-control" value="{{ form.down_payment.value|default:'' }}" oninput="formatCurrency(this)">
-                              </div>
+                                <div id="down_payment" class="form-group">
+                                  <label>Valor de la cuota inicial:</label>
+                                  <input type="text" id="down_payment_input" name="down_payment" class="form-control" value="{{ form.down_payment.value|default:0 }}" oninput="formatCurrency(this)">
+                                </div>
                             </div>
                         </div>
                     </div>
