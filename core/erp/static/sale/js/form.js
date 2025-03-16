@@ -9,7 +9,8 @@ var vents = {
     discountall: 0.00,
     total: 0.00,
     type_payment: '',
-    biweekly_pay: '',
+    down_payment: 0.00,
+    observation: '',
     products: []
   },
   get_ids: function() {
@@ -21,10 +22,10 @@ var vents = {
   },
   calculate_invoice: function() {
     var subtotal = 0.00;
-    var iva = $('input[name="iva"]').val();
-    var type_payment = $('select[name="type_payment"]').val();
-    var biweekly_pay = $('select[name="biweekly_pay').val();
-    var discountall = $('input[name="discountall"]').val();
+    var iva = ($('input[name="iva"]').val()) || 0;
+    var type_payment = ($('select[name="type_payment"]').val()) || 0;
+    var discountall = (($('input[name="discountall"]').val()) || 0).replace(/\./g, '').replace(/,/g, '.');  // Quita puntos y cambia la coma decimal
+
     $.each(this.items.products, function(pos, dict) {
       dict.pos = pos;
       var discount = dict.discount || 0;
@@ -32,24 +33,24 @@ var vents = {
       dict.subtotal = subtotalproduct - ((discount / 100) * subtotalproduct);
       subtotal += dict.subtotal;
     });
+
     this.items.subtotal = subtotal;
     this.items.iva = parseFloat(iva);
     this.items.total = this.items.subtotal + this.items.iva;
     this.items.discountall = parseFloat(discountall);
-    var discalc = this.items.discountall
-    this.items.total = this.items.total - discalc;
+    this.items.total = this.items.total - this.items.discountall;
     this.items.type_payment = type_payment;
-    this.items.biweekly_pay = biweekly_pay;
 
-    $('input[name="subtotal"]').val(this.items.subtotal.toFixed(2));
-    $('input[name="ivacalc"]').val((this.items.subtotal * (iva / 100)).toFixed(2));
-    $('input[name="discalc"]').val(discalc);
-    $('input[name="total"]').val(this.items.total.toFixed(2));
+    $('input[name="subtotal"]').val(this.items.subtotal.toLocaleString('es-CO'));
+    $('input[name="ivacalc"]').val((this.items.subtotal * (iva / 100)).toLocaleString('es-CO'));
+    $('input[name="total"]').val(this.items.total.toLocaleString('es-CO'));
   },
+
   add: function(item) {
     this.items.products.push(item);
     this.list();
   },
+
   list: function() {
     this.calculate_invoice();
     tblProducts = $('#tblProducts').DataTable({
@@ -181,7 +182,7 @@ $(function() {
   });
 
 
-  $("input[name='discountall']").on('change', function() {
+  $("input[name='discountall']").on('input', function() {
     vents.calculate_invoice();
   })
 
@@ -200,18 +201,18 @@ $(function() {
 
   $('select[name="type_payment"]').on('change', function() {
     console.log($(this).val());
-    if ($(this).val() === "CREDITO") {
-      $("#cuotas_container").fadeIn();  // Muestra el campo con animación
+    if ($(this).val() === "CREDIT") {
+      $("#down_payment").fadeIn();  // Muestra el campo con animación
     } else {
-      $("#cuotas_container").fadeOut();// Oculta el campo con animación
-      $('select[name="biweekly_pay"]').val('UNDEFINED');
+      $("#down_payment").fadeOut();// Oculta el campo con animación
+      this.down_payment = 0.00;
     }
     vents.calculate_invoice()
   });
 
-  $('select[name="biweekly_pay"]').on('change', function() {
-    vents.calculate_invoice()
-  });
+  $("input[name='down_payment']").on('change', function() {
+    vents.calculate_invoice();
+  })
   // search clients
 
   $('select[name="cli"]').select2({
@@ -423,8 +424,12 @@ $(function() {
       return false;
     }
 
+    var down_payment = (($('input[name="down_payment"]').val()) || 0).replace(/\./g, '').replace(/,/g, '.');  // Quita puntos y cambia la coma decimal
     vents.items.date_joined = $('input[name="date_joined"]').val();
     vents.items.cli = $('select[name="cli"]').val();
+    vents.items.down_payment = down_payment;
+    vents.items.observation = $('input[name="observation"]').val();
+
     var parameters = new FormData();
     parameters.append('action', $('input[name="action"]').val());
     parameters.append('vents', JSON.stringify(vents.items));

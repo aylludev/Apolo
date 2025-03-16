@@ -59,7 +59,7 @@ $(function() {
       { "data": "discountall" },
       { "data": "total" },
       { "data": "type_payment" },
-      { "data": "biweekly_pay" },
+      { "data": "down_payment" },
       { "data": "id" },
     ],
     columnDefs: [

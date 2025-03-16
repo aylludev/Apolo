@@ -80,7 +80,11 @@
                                     <tbody>
                                     </tbody>
                                 </table>
+                                </div>
                             </div>
+                                <div class="form-group">
+                                    <label>Notas: </label>
+                                    {{ form.observation }}
                         </div>
                     </div>
                     <div class="col-lg-4">
@@ -119,25 +123,28 @@
                                     <input type="text" class="form-control" readonly name="ivacalc" value="0.00">
                                 </div>
                                 <div class="form-group">
-                                    <label>Descuento a la compra (%):</label>
-                                    {{ form.discountall }}
-                                </div>
-                                <div class="form-group">
-                                    <label>Descuento:</label>
-                                    <input type="text" class="form-control" readonly name="discalc" value="0.00">
+                                    <label>Descuento a la compra:</label>
+                                    <input type="text" name="discountall" class="form-control" value="{{ form.discountall.value }}" oninput="formatCurrency(this)">
                                 </div>
                                 <div class="form-group">
                                     <label>Total a pagar:</label>
                                     {{ form.total }}
                                 </div>
-                                <div id="type_payment" class="form-group">
-                                    <label>Tipo de pago:</label>
-                                    {{ form.type_payment }}
-                                </div>
-                                <div id="cuotas_container" class="form-group" style="display: none;">
-                                    <label>Numero de cuotas:</label>
-                                    {{ form.biweekly_pay }}
-                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-secondary">
+                            <div class="card-header">
+                                <h3 class="card-title"><i class="fas fa-file-invoice"></i> Acuerdo de pago </h3>
+                            </div>
+                            <div class="card-body">
+                              <div id="type_payment" class="form-group">
+                                <label>Tipo de pago:</label>
+                                {{ form.type_payment }}
+                              </div>
+                              <div id="down_payment" class="form-group" style="display: none;">
+                                <label>Valor de la cuota inicial:</label>
+                                <input type="text" id="down_payment_input" name="down_payment" class="form-control" value="{{ form.down_payment.value|default:'' }}" oninput="formatCurrency(this)">
+                              </div>
                             </div>
                         </div>
                     </div>
@@ -216,8 +223,13 @@
         </div>
     </div>
 
-    <script>
+  <script>
         vents.items.products = {{ det|safe }};
         // Se removio el vents.list(); para calcular bien el iva en el editar. Revisar al final del archivo form.js se lo puso.$(document).ready(function() {
-    </script>
+    function formatCurrency(input) {
+      let value = input.value.replace(/\D/g, ''); // Eliminar todo lo que no sea número
+      value = new Intl.NumberFormat('es-CO').format(value); // Formato COP sin símbolo
+      input.value = value;
+    }   
+  </script>
 {% endblock %}

@@ -3,7 +3,7 @@ from datetime import datetime
 from django import forms
 from django.forms import ModelForm
 
-from core.erp.models import Category, Product, Client, Sale
+from core.erp.models import Category, Cotization, Product, Client, Sale
 
 
 class CategoryForm(ModelForm):
@@ -18,18 +18,8 @@ class CategoryForm(ModelForm):
         model = Category
         fields = '__all__'
         widgets = {
-            'name': forms.TextInput(
-                attrs={
-                    'placeholder': 'Ingrese un nombre',
-                }
-            ),
-            'desc': forms.Textarea(
-                attrs={
-                    'placeholder': 'Ingrese un nombre',
-                    'rows': 3,
-                    'cols': 3
-                }
-            ),
+            'name': forms.TextInput(attrs={'placeholder': 'Ingrese un nombre',}),
+            'desc': forms.Textarea(attrs={'placeholder': 'Ingrese un nombre', 'rows': 3, 'cols': 3 }),
         }
 
     def save(self, commit=True):
@@ -54,17 +44,8 @@ class ProductForm(ModelForm):
         model = Product
         fields = '__all__'
         widgets = {
-            'name': forms.TextInput(
-                attrs={
-                    'placeholder': 'Ingrese un nombre',
-                }
-            ),
-            'cat': forms.Select(
-                attrs={
-                    'class': 'select2',
-                    'style': 'width: 100%'
-                }
-            ),
+            'name': forms.TextInput(attrs={'placeholder': 'Ingrese un nombre',}),
+            'cat': forms.Select(attrs={'class': 'select2', 'style': 'width: 100%'}),
         }
 
     def save(self, commit=True):
@@ -93,13 +74,8 @@ class ClientForm(ModelForm):
             'surnames': forms.TextInput(attrs={'placeholder': 'Ingrese sus apellidos',}),
             'dni': forms.TextInput(attrs={'placeholder': 'Ingrese su dni',}),
             'email': forms.TextInput(attrs={'placeholder': 'Ingrese su email',}),
-            'date_birthday': forms.DateInput(format='%Y-%m-%d',
-                attrs={'value': datetime.now().strftime('%Y-%m-%d'), 'autocomplete': 'off', 'class': 'form-control datetimepicker-input datetimepiker4',
-                    'id': 'date_joined', 'data-target': '#date_joined', 'data-toggle': 'datetimepicker' }),
-            'address': forms.TextInput(attrs={
-                    'placeholder': 'Ingrese su dirección',
-                }
-            ),
+            'date_birthday': forms.DateInput(format='%Y-%m-%d', attrs={'value': datetime.now().strftime('%Y-%m-%d'), 'autocomplete': 'off', 'class': 'form-control datetimepicker-input datetimepiker4', 'id': 'date_joined', 'data-target': '#date_joined', 'data-toggle': 'datetimepicker' }),
+            'address': forms.TextInput(attrs={'placeholder': 'Ingrese su dirección', }),
             'gender': forms.Select(),
             'observation': forms.Textarea(attrs={'placeholder': 'Observaciones',}),
         }
@@ -156,41 +132,15 @@ class SaleForm(ModelForm):
         model = Sale
         fields = '__all__'
         widgets = {
-            'cli': forms.Select(attrs={
-                'class': 'custom-select select2',
-                # 'style': 'width: 100%'
-            }),
-            'date_joined': forms.DateInput(
-                format='%Y-%m-%d',
-                attrs={
-                    'value': datetime.now().strftime('%Y-%m-%d'),
-                    'autocomplete': 'off',
-                    'class': 'form-control datetimepicker-input',
-                    'id': 'date_joined',
-                    'data-target': '#date_joined',
-                    'data-toggle': 'datetimepicker'
-                }
-            ),
-            'iva': forms.TextInput(attrs={
-                'class': 'form-control',
-            }),
-            'subtotal': forms.TextInput(attrs={
-                'readonly': True,
-                'class': 'form-control',
-            }),
-            'discountall': forms.TextInput(attrs={
-                'class': 'form-control',
-            }),
-            'total': forms.TextInput(attrs={
-                'readonly': True,
-                'class': 'form-control',
-            }),
-            'type_payment': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-            'biweekly_pay': forms.Select(attrs={
-                'class': 'form-control',
-            }),
+            'cli': forms.Select(attrs={'class': 'custom-select select2',}),
+            'date_joined': forms.DateInput(format='%Y-%m-%d', attrs={'value': datetime.now().strftime('%Y-%m-%d'), 'autocomplete': 'off', 'class': 'form-control datetimepicker-input', 'id': 'date_joined', 'data-target': '#date_joined', 'data-toggle': 'datetimepicker' }),
+            'iva': forms.TextInput(attrs={'class': 'form-control', }),
+            'subtotal': forms.TextInput(attrs={'readonly': True, 'class': 'form-control', }),
+            'discountall': forms.TextInput(attrs={ 'class': 'form-control', }),
+            'total': forms.TextInput(attrs={'readonly': True, 'class': 'form-control', }),
+            'type_payment': forms.Select(attrs={'class': 'form-control', }),
+            'down_payment': forms.TextInput(attrs={'value': 0, 'class': 'form-control', }),
+            'observation' : forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class CotizationForm(ModelForm):
@@ -199,7 +149,7 @@ class CotizationForm(ModelForm):
         self.fields['cli'].queryset = Client.objects.none()
 
     class Meta:
-        model = Sale
+        model = Cotization
         fields = '__all__'
         widgets = {
             'cli': forms.Select(attrs={
@@ -238,3 +188,4 @@ class CotizationForm(ModelForm):
                 'class': 'form-control',
             }),
         }
+

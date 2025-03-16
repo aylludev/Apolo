@@ -71,15 +71,13 @@
             <th style="width: 25%;" class="text-center">FECHA FACTURA</th>
             <th style="width: 20%;" class="text-center">VENDEDOR</th>
             <th style="width: 25%;" class="text-center">FORMA DE PAGO</th>
-            <th style="width: 30%;" class="text-center">CONDICIONES DE PAGO</th>
         </tr>
         </thead>
         <tbody>
             <tr>
                 <td class="text-center">{{ sale.date_joined|date:'c' }}</td>
                 <td class="text-center">{{ comp.vendor }} </td>
-                <td class="text-center">{{ sale.type_payment }}</td>  
-                <td class="text-center">{{ sale.biweekly_pay }}</td>
+                <td class="text-center">{{ sale.get_type_payment_display }}</td>  
             </tr>
         </tbody>
 
@@ -109,7 +107,6 @@
             <th style="width: 25%;">Producto</th>
             <th style="width: 10%;">Cantidad</th>
             <th style="width: 15%;">P.Unitario</th>
-            <th style="width: 15%;">Valor bruto</th>
             <th style="width: 10%;">Descuento</th>
             <th style="width: 15%;" class="text-right">Subtotal</th>
         </tr>
@@ -121,28 +118,56 @@
                 <td>{{ det.prod__name }}</td>
                 <td class="text-center">{{ det.cant }}</td>
                 <td class="text-center">${{ det.price|floatformat:0|intcomma }}</td>
-                <td class="text-center">${{ det.total_val|floatformat:0|intcomma }}</td>
-                <td class="text-center">${{ det.total_discount|floatformat:0|intcomma }} </td>
-                <td class="text-right">${{ det.subtotal|floatformat:0|intcomma }}</td>
+                <td class="text-center">{{ det.discount|floatformat:0|intcomma }}% </td>
+                <td class="text-right">${{ det.total_val|floatformat:0|intcomma }}</td>
             </tr>
         {% endfor %}
+        {% if sale.type_payment == "CASH" %}
+        
+          <tr><td colspan="6"><br><br></td></tr>
+          <td rowspan="5" colspan="4"><b>Nota:</b> <br> {{ sale.observation }}</td>
+          <tr>
+            <td class="text-right"><b>Subtotal</b></td>
+            <td class="text-right">${{ sale.subtotal|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><b>Iva</b></td>
+            <td class="text-right">{{ sale.iva|floatformat:0 }}%</td>
+          </tr>
+          <tr>
+            <td class="text-right"><b>Descuento</b></td>
+            <td class="text-right">${{ sale.discountall|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><b>Total a pagar</b></td>
+            <td class="text-right">${{ sale.total|floatformat:0|intcomma }}</td>
+          </tr>
+        {% elif sale.type_payment == "CREDIT" %}
+        <tr><td colspan="6"><br><br></td></tr>
+        <td rowspan="7" colspan="4"><b>Nota:</b> <br> {{ sale.observation }}</td>
         <tr>
-            <td colspan="6" class="text-right"><b>Subtotal</b></td>
+            <td class="text-right"><b>Subtotal</b></td>
             <td class="text-right">${{ sale.subtotal|floatformat:0|intcomma }}</td>
         </tr>
         <tr>
-            <td colspan="6" class="text-right"><b>Iva</b></td>
+            <td class="text-right"><b>Iva</b></td>
             <td class="text-right">{{ sale.iva|floatformat:0 }}%</td>
         </tr>
         <tr>
-            <td colspan="6" class="text-right"><b>Descuento</b></td>
+            <td class="text-right"><b>Descuento</b></td>
             <td class="text-right">${{ sale.discountall|floatformat:0|intcomma }}</td>
         </tr>
         <tr>
-            <td colspan="6" class="text-right"><b>Total a pagar</b></td>
+            <td class="text-right"><b>Total a pagar</b></td>
             <td class="text-right">${{ sale.total|floatformat:0|intcomma }}</td>
         </tr>
-        <tr>
+          <tr>
+            <td class="text-right"><b>Abonado</b></td><td class="text-right">$ {{ sale.down_payment|floatformat:0|intcomma }}</td>
+          </tr>
+          <tr>
+            <td class="text-right"><b>Saldo</b></td><td class="text-right">$ {{ balance|floatformat:0|intcomma }}</td>
+          </tr>
+        {% endif %}
         </tbody>
       </table>
       <table>

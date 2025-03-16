@@ -1,3 +1,4 @@
+from itertools import product
 import json
 import os
 from django.shortcuts import get_object_or_404
@@ -14,7 +15,7 @@ from weasyprint import HTML, CSS
 
 from core.erp.forms import SaleForm, ClientForm
 from core.erp.mixins import ValidatePermissionRequiredMixin
-from core.erp.models import Sale, Product, DetSale, Client
+from core.erp.models import Sale, Product, DetSale, Client, CreditSale
 
 
 class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView):
@@ -28,7 +29,7 @@ class SaleListView(LoginRequiredMixin, ValidatePermissionRequiredMixin, ListView
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
-                for i in Sale.objects.all()[0:15]:
+                for i in Sale.objects.all():
                     data.append(i.toJSON())
             elif action == 'search_details_prod':
                 data = []
@@ -95,7 +96,8 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                     sale.discountall = float(vents['discountall'])
                     sale.total = float(vents['total'])
                     sale.type_payment = vents['type_payment']
-                    sale.biweekly_pay = vents['biweekly_pay']
+                    sale.down_payment = float(vents['down_payment'])
+                    sale.observation = vents['observation']
                     sale.save()
                     for i in vents['products']:
                         det = DetSale()
@@ -109,6 +111,12 @@ class SaleCreateView(LoginRequiredMixin, ValidatePermissionRequiredMixin, Create
                         det.prod.stock -= det.cant
                         det.prod.save()
                     data = {'id': sale.id}
+                    if vents['type_payment'] == 'CREDIT':
+                        credsale = CreditSale()
+                        credsale.sale_id = sale.id
+                        credsale.total_credit = sale.total
+                        credsale.down_payment = sale.down_payment
+                        credsale.save()
             elif action == 'search_clients':
                 data = []
                 term = request.POST['term']
@@ -285,14 +293,22 @@ class SaleInvoicePdfView(LoginRequiredMixin, View):
 
             # Obtener detalles de venta y calcular el descuento total
             details = sale.detsale_set.all().values('prod__name', 'price', 'cant', 'discount', 'subtotal')
+            
+            products_discount=0
+            balance = 0
 
             # Convertir QuerySet a lista y calcular el descuento total
             details = list(details)
             for item in details:
-                item['total_discount'] = (item['price'] * item['cant']) - item['subtotal'] # Multiplicación del descuento por la cantidad
+                item['p_discount'] = (item['price'] * item['cant']) - item['subtotal'] # Multiplicación del descuento por la cantidad
                 item['total_val'] = (item['price'] * item['cant']) # Multiplicación del descuento por la cantidad
+                products_discount += item['p_discount']
 
+            sale.discountall = sale.discountall + products_discount
+            sale.subtotal = sale.subtotal + products_discount
+            balance = sale.total - sale.down_payment
             context = {
+                'balance': balance,
                 'sale': sale,
                 'details':details,
                 'comp': {'name': 'AGROINSUMOS MERKO SUR', 'nit': '1085928681-1', 'address': 'La Victoria', 'city': 'Ipiales', 'vendor': 'Alexander Palles'},

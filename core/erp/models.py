@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models.fields.files import default_storage
 from django.forms import model_to_dict
 
 from config import settings
@@ -89,15 +90,8 @@ class Client(models.Model):
 
 class Sale(models.Model):
     TYPE_PAYMENT = [
-        ('CONTADO', 'Contado'),
-        ('CREDITO', 'Credito'),
-    ]
-    BIWEEKLY_PAY = [
-        ('UNDEFINED', 'No especifica'),
-        ('15 DIAS', '15 días'),
-        ('30 DIAS', '30 días'),
-        ('45 DIAS', '45 días'),
-        ('60 DIAS', '60 días'),
+        ('CASH', 'Contado'),
+        ('CREDIT', 'Crédito'),
     ]
 
     cli = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -107,7 +101,8 @@ class Sale(models.Model):
     discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
-    biweekly_pay = models.CharField(max_length=10, choices=BIWEEKLY_PAY, default='UNDEFINED')
+    down_payment = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    observation = models.CharField(max_length=254, null=True, blank=True)
 
     def __str__(self):
         return self.cli.names
@@ -121,7 +116,7 @@ class Sale(models.Model):
         item['discountall'] = format(self.discountall, '.2f')
         item['date_joined'] = self.date_joined.strftime('%Y-%m-%d')
         item['type_payment'] = self.type_payment
-        item['biweekly_pay'] = self.biweekly_pay
+        item['down_payment'] = format(self.down_payment, '.2f')
         item['det'] = [i.toJSON() for i in self.detsale_set.all()]
         return item
 
@@ -141,8 +136,8 @@ class DetSale(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
     prod = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
-    cant = models.IntegerField(default=0)
-    discount = models.IntegerField(default=0)
+    cant = models.IntegerField(0)
+    discount = models.IntegerField(0)
     subtotal = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):
@@ -159,6 +154,31 @@ class DetSale(models.Model):
         verbose_name = 'Detalle de Venta'
         verbose_name_plural = 'Detalle de Ventas'
         ordering = ['id']
+
+class CreditSale(models.Model):
+    sale = models.OneToOneField(Sale, on_delete=models.CASCADE, related_name="credit_sale")
+    total_credit = models.DecimalField(max_digits=10, decimal_places=2)
+    down_payment = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20, choices=[('pending', 'Pendiente'), ('paid', 'Pagado')], default='pending')
+
+
+    def make_payment(self, amount):
+        self.balance -= amount
+        if self.balance <= 0:
+            self.status = 'paid'
+            self.balance = 0
+        self.save()
+
+    def __str__(self):
+        return f"Crédito #{self.sale.id} - {self.customer} - ${self.balance} pendiente"
+
+class CreditPayment(models.Model):
+    credit_sale = models.ForeignKey(CreditSale, on_delete=models.CASCADE, related_name="payments")
+    date = models.DateTimeField(default=datetime.now)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Pago de ${self.amount} - {self.credit_sale.customer} - {self.date}"
 
 class Cotization(models.Model):
     TYPE_PAYMENT = [
@@ -180,7 +200,7 @@ class Cotization(models.Model):
     discountall = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
     type_payment = models.CharField(max_length=10, choices=TYPE_PAYMENT, default='CONTADO')
-    biweekly_pay = models.CharField(max_length=10, choices=BIWEEKLY_PAY, default='UNDEFINED')
+    down_payment = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):
         return self.cli.names
